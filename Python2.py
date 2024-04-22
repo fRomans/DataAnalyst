@@ -54,40 +54,122 @@ import pandas as pd
 bookings = pd.read_csv('R:\AProgr\data analyst\downloadfiles\\bookings.csv', encoding = 'windows-1251',sep = ';')
 
 
-bookings
+# print(bookings)
+#
+# booking_list = bookings.columns.to_list()
+# new_list = []
+# for elbook in booking_list:
+#
+#     strng = str(elbook)
+#     #     strng.trim()
+#     strng = strng.lower()
+#     strng = strng.replace(' ', '_')
+#     new_list.append(strng)
+# print(new_list)
+#
+#
+# for new, boo in zip(new_list, booking_list):
+#     bookings = bookings.rename(columns={boo : new})
+#
+#
+# print(bookings.dtypes)
+#
+# bookings_head = bookings.head(7)
+#
+# print(bookings_head)
+#
+# country = bookings \
+#     .query("is_canceled == 0") \
+#     .groupby(['country'], as_index=False) \
+#     .agg({'is_canceled': 'count'}) \
+#     .sort_values('is_canceled')
+#
+# print(country.head(5))
+#
+# avrg = bookings \
+#     .groupby(['hotel'], as_index=False) \
+#     .agg({'stays_total_nights': 'mean'}) \
+#
+# print(avrg.round(2))
+#
+#
+#
+#
+# ecuals = bookings \
+#     .query("assigned_room_type != reserved_room_type") \
+#
+# print(ecuals.shape)
+#
+# arrivM = bookings \
+#     .query("arrival_date_month == 'May'") \
+#     .groupby(['arrival_date_year'], as_index=False) \
+#     .agg({'arrival_date_month': 'count'}) \
+#     .sort_values('arrival_date_month') \
+#
+# print(arrivM)
+#
+# arrivO = bookings \
+#     .query("arrival_date_month == 'October'") \
+#     .groupby(['arrival_date_year'], as_index=False) \
+#     .agg({'arrival_date_month': 'count'}) \
+#     .sort_values('arrival_date_month') \
+#
+# print(arrivO)
+#
+# arrivS = bookings \
+#     .query("arrival_date_month == 'September'") \
+#     .groupby(['arrival_date_year'], as_index=False) \
+#     .agg({'arrival_date_month': 'count'}) \
+#     .sort_values('arrival_date_month') \
+#
+# print(arrivS)
+#
+# canceled = bookings \
+#     .query("hotel == 'City Hotel'") \
+#     .query("is_canceled == 1") \
+#     .groupby(['arrival_date_year','arrival_date_month'], as_index=False) \
+#     .agg({'is_canceled': 'count'}) \
+#     .sort_values('is_canceled', ascending=False) \
+#
+# print(canceled)
+#
+# znach = bookings \
+#     .groupby(['adults','children','babies'], as_index=False) \
+#     .agg({'adults': 'mean', 'children': 'mean', 'babies': 'mean'}) \
+#
+# print(znach.idxmax())
+#
+# bookings['total_kids'] = bookings['children'] + bookings['babies']
+# child = bookings \
+#     .groupby(['hotel'], as_index=False) \
+#     .agg({'total_kids': 'mean'}) \
+#     .sort_values('total_kids', ascending=False) \
+#
+# print(child.round(2))
 
-booking_list = bookings.columns.to_list()
-new_list = []
-for elbook in booking_list:
+# ___________________________________________________________________________
 
-    strng = str(elbook)
-    #     strng.trim()
-    strng = strng.lower()
-    strng = strng.replace(' ', '_')
-    new_list.append(strng)
-print(new_list)
+bookings['has_kids'] = bookings['total_kids'].astype(bollean)
 
+cens = bookings \
+    .query("has_kids == True") \
+    .query("is_canceled == 1") \
+    .groupby(['has_kids'], as_index=False) \
+    .agg({'has_kids': 'sum'}) \
+    .sort_values('has_kids', ascending=False) \
 
-for new, boo in zip(new_list, booking_list):
-    bookings = bookings.rename(columns={boo : new})
+bookings.head(3)
 
+cens
 
-print(bookings.dtypes)
-
-bookings_head = bookings.head(7)
-
-print(bookings_head)
-
-country = bookings \
+nocens = bookings \
+    .query("has_kids == True") \
     .query("is_canceled == 0") \
-    .groupby(['country'], as_index=False) \
-    .agg({'is_canceled': 'count'}) \
-    .sort_values('is_canceled')
+    .groupby(['has_kids'], as_index=False) \
+    .agg({'has_kids': 'sum'}) \
+    .sort_values('has_kids', ascending=False) \
 
-print(country.head(5))
+nocens
 
-avrg = bookings \
-    .groupby(['hotel'], as_index=False) \
-    .agg({'stays_total_nights': 'mean'}) \
-
-print(avrg.round(2))
+summa = cens + nocens
+oneproc = summa/100
