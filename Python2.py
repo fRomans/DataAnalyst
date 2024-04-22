@@ -148,8 +148,15 @@ bookings = pd.read_csv('R:\AProgr\data analyst\downloadfiles\\bookings.csv', enc
 # print(child.round(2))
 
 # ___________________________________________________________________________
+# __________________________________________________________________________________
+# ________________________________________________________________________________________
+#_____________________________________________________________________________________________________
 
-bookings['has_kids'] = bookings['total_kids'].astype(bollean)
+
+                                        # код ниже не работает
+
+
+bookings['has_kids'] = bookings['total_kids']
 
 cens = bookings \
     .query("has_kids == True") \
@@ -158,9 +165,9 @@ cens = bookings \
     .agg({'has_kids': 'sum'}) \
     .sort_values('has_kids', ascending=False) \
 
-bookings.head(3)
+print(bookings.head(3))
 
-cens
+print(cens)
 
 nocens = bookings \
     .query("has_kids == True") \
@@ -169,7 +176,10 @@ nocens = bookings \
     .agg({'has_kids': 'sum'}) \
     .sort_values('has_kids', ascending=False) \
 
-nocens
+print(nocens)
 
 summa = cens + nocens
+print(summa)
+
 oneproc = summa/100
+print(oneproc)
