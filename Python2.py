@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # df = pd.read_csv('R:\AProgr\data analyst\downloadfiles\lesson_1_data.csv', encoding = 'windows-1251',sep = ';')
 # print(df.tail())
@@ -151,35 +152,87 @@ bookings = pd.read_csv('R:\AProgr\data analyst\downloadfiles\\bookings.csv', enc
 # __________________________________________________________________________________
 # ________________________________________________________________________________________
 #_____________________________________________________________________________________________________
+# Создайте колонку has_kids, которая принимает значение True, если клиент при бронировании указал хотя бы одного
+# ребенка (total_kids), в противном случае – False. Далее проверьте, среди какой группы пользователей показатель
+# оттока выше.
+# В качестве ответа укажите наибольший % оттока, округленный до 2 знаков после точки
+# (то есть доля 0.24563 будет 24.56% и в ответ пойдёт 24.56)
 
 
-                                        # код ниже не работает
+
+path_to_file = '/mnt/HC_Volume_18315164/home-jupyter/jupyter-rom-fadeev/bookings.csv'
+bookings = pd.read_csv(path_to_file, encoding='windows-1251', sep=';')
+
+booking_list = bookings.columns.to_list()
+new_list = []
+for elbook in booking_list:
+
+    strng = str(elbook)
+    #     strng.trim()
+    strng = strng.lower()
+    strng = strng.replace(' ', '_')
+    new_list.append(strng)
+
+for new, boo in zip(new_list, booking_list):
+    bookings = bookings.rename(columns={boo : new})
+
+bookings['total_kids'] = bookings['children'] + bookings['babies']
 
 
-bookings['has_kids'] = bookings['total_kids']
+# bookings['has_kids'] = np.where(bookings['total_kids']>0, True, False)
+bookings['has_kids'] = bookings.total_kids > 0
 
-cens = bookings \
-    .query("has_kids == True") \
-    .query("is_canceled == 1") \
-    .groupby(['has_kids'], as_index=False) \
-    .agg({'has_kids': 'sum'}) \
-    .sort_values('has_kids', ascending=False) \
+bookings
 
-print(bookings.head(3))
-
-print(cens)
-
-nocens = bookings \
+yesChildNotCencel = bookings \
     .query("has_kids == True") \
     .query("is_canceled == 0") \
-    .groupby(['has_kids'], as_index=False) \
-    .agg({'has_kids': 'sum'}) \
-    .sort_values('has_kids', ascending=False) \
+    .groupby(['is_canceled'], as_index=False) \
+    .agg({'is_canceled': 'count'}) \
+    #     .sort_values('has_kids', ascending=False) \
 
-print(nocens)
+yesChildNotCencel
 
-summa = cens + nocens
-print(summa)
+yesChildCencel = bookings \
+    .query("has_kids == True") \
+    .query("is_canceled == 1") \
+    .groupby(['is_canceled'], as_index=False) \
+    .agg({'is_canceled': 'count'}) \
+ \
+yesChildCencel
 
-oneproc = summa/100
-print(oneproc)
+notChildCencel = bookings \
+    .query("has_kids == False") \
+    .query("is_canceled == 1") \
+    .groupby(['is_canceled'], as_index=False) \
+    .agg({'is_canceled': 'count'}) \
+    #     .sort_values('has_kids', ascending=False) \
+
+notChildCencel
+
+noChildNotCencel = bookings \
+    .query("has_kids == False") \
+    .query("is_canceled == 0") \
+    .groupby(['is_canceled'], as_index=False) \
+    .agg({'is_canceled': 'count'}) \
+ \
+noChildNotCencel
+
+summaD = yesChildNotCencel + yesChildCencel
+summaBez = noChildNotCencel + notChildCencel
+oneprocD = summaD/100
+oneprocBez = summaBez/100
+procD = (yesChildCencel/oneprocD)
+procBez = notChildCencel/oneprocBez
+
+summaD
+
+oneprocBez
+
+oneprocD
+
+oneprocBez
+
+procD.round(2)
+
+procBez.round(2)
