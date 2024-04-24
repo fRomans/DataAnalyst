@@ -37,3 +37,11 @@ users_dict = {
     'akarpov' : {'name' : 'Anatoly','surname' : 'Karpov', 'age': 30, 'salary': 250000,'position': 'senior' }
 
 }
+
+# _________________________________________________________________________
+# задача: перевести фарингейт в цельсия
+def temp_to_celcius(tempFar):
+    cel = (tempFar - 32)*5.0/9.0
+    return cel
+
+taxi['temp_C'] = temp_to_celcius(taxi['temp'])
